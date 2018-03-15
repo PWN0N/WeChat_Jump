@@ -9,31 +9,18 @@
 using namespace cv;
 using namespace std;
 
+Mat getProjectiveTransImg(Mat src_img);
+
 int main()
 {
-	Mat dst;
-	//Point2f src_position[3];
-	//Point2f dst_position[3];
 
 
-	//src_position[0] = Point2f(586, 1102);
-	//src_position[1] = Point2f(1056, 1102);
-	//src_position[2] = Point2f(821, 967);
-
-	//dst_position[0] = Point2f(586, 1102);
-	//dst_position[1] = Point2f(918, 1435);
-	//dst_position[2] = Point2f(918, 1102);
-
-//	Mat trans = getAffineTransform(src_position, dst_position);
-	
-	double transtemp[2][3] = { 0.7063829787234042, -1.229629629629629,1527.111426319937, 
-		0.7085106382978724, 1.233333333333333, -672.3205673758865 };
-	Mat trans = cv::Mat(2, 3, CV_64FC1, transtemp);
-	cout << trans << endl << endl;
 	Mat temp = imread("flag.png");
 	Mat img = imread("7.png");
-	dst = Mat::zeros(img.rows, img.cols, img.type());
-	warpAffine(img, dst, trans, dst.size());
+
+	namedWindow("transed", WINDOW_NORMAL);
+	imshow("transed", getProjectiveTransImg(img));
+
 	Mat result;
 	int result_cols = img.cols - temp.cols + 1;
 	int result_rows = img.rows - temp.rows + 1;
@@ -56,10 +43,46 @@ int main()
 
 	namedWindow("img", WINDOW_NORMAL);
 	imshow("img", img);
-	namedWindow("dst", WINDOW_NORMAL);
-	imshow("dst", dst);
+
 	waitKey(0);
 	return 0;
 }
 
+Mat getProjectiveTransImg(Mat src_img) 
+{
+	//Point2f src_position[3];
+	//Point2f dst_position[3];
 
+	//src_position[0] = Point2f(586, 1102);
+	//src_position[1] = Point2f(1056, 1102);
+	//src_position[2] = Point2f(821, 967);
+
+	//dst_position[0] = Point2f(586, 1102);
+	//dst_position[1] = Point2f(918, 1435);
+	//dst_position[2] = Point2f(918, 1102);
+
+	//Mat trans = getAffineTransform(src_position, dst_position);
+
+	Mat transedImg;
+	double transtemp[2][3] = { 0.7063829787234042, -1.229629629629629,1527.111426319937, 
+		0.7085106382978724, 1.233333333333333, -672.3205673758865 };
+	Mat trans = cv::Mat(2, 3, CV_64FC1, transtemp);
+	transedImg = Mat::zeros(src_img.rows, src_img.cols, src_img.type());
+	warpAffine(src_img, transedImg, trans, transedImg.size());
+
+	return transedImg;
+}
+
+Point2f getJumperPosition(Mat src_img)
+{
+	Point2f Jumper_position;
+
+	return Jumper_position;
+}
+
+Point2f getDestPlatform(Mat trans_img)
+{
+	Point2f Platform_position;
+
+	return Platform_position;
+}
