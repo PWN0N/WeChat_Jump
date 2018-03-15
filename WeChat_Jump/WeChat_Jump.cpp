@@ -12,24 +12,28 @@ using namespace std;
 int main()
 {
 	Mat dst;
-	Point2f src_position[3];
-	Point2f dst_position[3];
+	//Point2f src_position[3];
+	//Point2f dst_position[3];
 
 
-	src_position[0] = Point2f(586, 1102);
-	src_position[1] = Point2f(1057, 1102);
-	src_position[2] = Point2f(821, 966);
+	//src_position[0] = Point2f(586, 1102);
+	//src_position[1] = Point2f(1056, 1102);
+	//src_position[2] = Point2f(821, 967);
 
-	dst_position[0] = Point2f(586, 1102);
-	dst_position[1] = Point2f(919, 1102);
-	dst_position[2] = Point2f(586, 769);
-	Mat trans = getAffineTransform(src_position, dst_position);
+	//dst_position[0] = Point2f(586, 1102);
+	//dst_position[1] = Point2f(918, 1435);
+	//dst_position[2] = Point2f(918, 1102);
 
-
+//	Mat trans = getAffineTransform(src_position, dst_position);
+	
+	double transtemp[2][3] = { 0.7063829787234042, -1.229629629629629,1527.111426319937, 
+		0.7085106382978724, 1.233333333333333, -672.3205673758865 };
+	Mat trans = cv::Mat(2, 3, CV_64FC1, transtemp);
+	cout << trans << endl << endl;
 	Mat temp = imread("flag.png");
-	Mat img = imread("5.png");
+	Mat img = imread("7.png");
 	dst = Mat::zeros(img.rows, img.cols, img.type());
-	warpAffine(img, dst, trans, img.size());
+	warpAffine(img, dst, trans, dst.size());
 	Mat result;
 	int result_cols = img.cols - temp.cols + 1;
 	int result_rows = img.rows - temp.rows + 1;
@@ -57,3 +61,5 @@ int main()
 	waitKey(0);
 	return 0;
 }
+
+
