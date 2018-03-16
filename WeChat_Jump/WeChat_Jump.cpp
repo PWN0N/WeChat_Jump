@@ -10,37 +10,19 @@ using namespace cv;
 using namespace std;
 
 Mat getProjectiveTransImg(Mat src_img);
+Point getJumperPosition(Mat src_img);
 
 int main()
 {
-
-
-	Mat temp = imread("flag.png");
 	Mat img = imread("7.png");
-
+	
 	namedWindow("transed", WINDOW_NORMAL);
 	imshow("transed", getProjectiveTransImg(img));
 
-	Mat result;
-	int result_cols = img.cols - temp.cols + 1;
-	int result_rows = img.rows - temp.rows + 1;
-	result.create(result_cols, result_rows, CV_32FC1);
-	
-	matchTemplate(img, temp, result, TM_CCORR);//标准平方差匹配
-	normalize(result, result, 0, 1, NORM_MINMAX, -1, Mat());
-
-	double minVal = -1;
-	double maxVal;
-	Point minLoc;
-	Point maxLoc;
-	Point matchLoc;
-	cout << "匹配度：" << minVal << endl;
-	minMaxLoc(result, &minVal, &maxVal, &minLoc, &maxLoc, Mat());
-	cout << "匹配度：" << minVal << endl;
-	matchLoc = minLoc;
-
-	rectangle(img, matchLoc, Point(matchLoc.x + temp.cols, matchLoc.y + temp.rows), Scalar(0, 255, 0), 2, 8, 0);
-
+	Point Jumper_pose;
+	Jumper_pose = getJumperPosition(img);
+	circle(img, Jumper_pose, 10, Scalar(0, 0, 255), 2, 8, 0);
+	cout << "棋子坐标为：" << Jumper_pose << endl << endl;
 	namedWindow("img", WINDOW_NORMAL);
 	imshow("img", img);
 
@@ -73,9 +55,32 @@ Mat getProjectiveTransImg(Mat src_img)
 	return transedImg;
 }
 
-Point2f getJumperPosition(Mat src_img)
+Point getJumperPosition(Mat src_img)
 {
-	Point2f Jumper_position;
+	Point Jumper_position;
+	Mat temp = imread("flag.png");
+	Mat result;
+	int result_cols = src_img.cols - temp.cols + 1;
+	int result_rows = src_img.rows - temp.rows + 1;
+	result.create(result_cols, result_rows, CV_32FC1);
+
+	matchTemplate(src_img, temp, result, TM_SQDIFF);//标准平方差匹配
+	normalize(result, result, 0, 1, NORM_MINMAX, -1, Mat());
+
+	double minVal = -1;
+	double maxVal;
+	Point minLoc;
+	Point maxLoc;
+	Point matchLoc;
+	cout << "匹配度：" << minVal << endl;
+	minMaxLoc(result, &minVal, &maxVal, &minLoc, &maxLoc, Mat());
+	cout << "匹配度：" << minVal << endl;
+	matchLoc = minLoc;
+
+	//rectangle(src_img, matchLoc, Point(matchLoc.x + temp.cols, matchLoc.y + temp.rows), Scalar(0, 255, 0), 2, 8, 0);
+	Jumper_position = minLoc;
+	Jumper_position.x = Jumper_position.x + (temp.cols / 2);
+	Jumper_position.y = Jumper_position.y + (temp.rows * 0.85);
 
 	return Jumper_position;
 }
