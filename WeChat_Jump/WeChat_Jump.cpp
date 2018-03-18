@@ -11,17 +11,19 @@ using namespace std;
 
 Mat getProjectiveTransImg(Mat src_img);
 Point getJumperPosition(Mat src_img);
-
+Point getDestPlatformPosition(Mat trans_img);
 int main()
 {
 	Mat img = imread("7.png");
 	
 	namedWindow("transed", WINDOW_NORMAL);
 	imshow("transed", getProjectiveTransImg(img));
+	getDestPlatformPosition(getProjectiveTransImg(img));
+
 
 	Point Jumper_pose;
 	Jumper_pose = getJumperPosition(img);
-	circle(img, Jumper_pose, 10, Scalar(0, 0, 255), 2, 8, 0);
+	circle(img, Jumper_pose, 10, Scalar(0, 0, 255), 5, 8, 0);
 	cout << "Æå×Ó×ø±êÎª£º" << Jumper_pose << endl << endl;
 	namedWindow("img", WINDOW_NORMAL);
 	imshow("img", img);
@@ -85,9 +87,28 @@ Point getJumperPosition(Mat src_img)
 	return Jumper_position;
 }
 
-Point2f getDestPlatform(Mat trans_img)
+Point getDestPlatformPosition(Mat trans_img)
 {
-	Point2f Platform_position;
+	Point Platform_position;
+
+	Mat gray;
+	cvtColor(trans_img, gray, CV_BGR2GRAY);
+	GaussianBlur(gray, gray, Size(3, 3), 3, 3);
+
+	Mat img;
+
+	Canny(gray, img, 0, 9, 3);
+	namedWindow("result", WINDOW_NORMAL);
+	imshow("result", img);
+	Mat img1;
+	img.copyTo(img1);
+	vector<vector<Point>> contours;
+	vector<Vec4i> hierarchy;
+	findContours(img, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_NONE);
+	Mat resultImage = Mat::zeros(img.size(), CV_8U);
+	drawContours(resultImage, contours, -1, Scalar(255, 0, 255));
+	//namedWindow("result", WINDOW_NORMAL);
+	//imshow("result", resultImage);
 
 	return Platform_position;
 }
